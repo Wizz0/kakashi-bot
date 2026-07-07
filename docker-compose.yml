@@ -1,5 +1,9 @@
 services:
   bot:
     build: .
-    container_name: bot
+    container_name: kakashi-bot
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env
     restart: unless-stopped
