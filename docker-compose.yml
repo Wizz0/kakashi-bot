@@ -2,6 +2,8 @@ services:
   bot:
     build: .
     container_name: kakashi-bot
+    ports:
+      - ${API_PORT}:${API_PORT}
     volumes:
       - ./data:/app/data
     env_file:

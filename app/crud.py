@@ -8,7 +8,7 @@ def get_today() -> date:
 
 async def add_user(name: str) -> int:
     async with engine.connect() as conn:
-        result = await conn.execeute(
+        result = await conn.execute(
             text("INSERT INTO users (name) VALUES (:name) RETURNING id"),
             {"name": name}
         )
