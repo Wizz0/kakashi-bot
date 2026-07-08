@@ -1,7 +1,10 @@
 import os
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 load_dotenv()
+
+TIMEZONE = ZoneInfo(os.getenv("TIMEZONE", "Asia/Yakutsk"))
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 GROUP_CHAT_ID = int(os.getenv("GROUP_CHAT_ID"))
