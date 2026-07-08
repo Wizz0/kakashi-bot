@@ -9,7 +9,7 @@ def get_today() -> date:
 async def add_user(name: str) -> int:
     async with engine.connect() as conn:
         result = await conn.execute(
-            text("INSERT INTO users (name) VALUES (:name) RETURNING id"),
+            text("INSERT INTO users (name) VALUES (:name, 0) RETURNING id"),
             {"name": name}
         )
         await conn.commit()
@@ -35,7 +35,7 @@ async def update_user(user_id: int, name: str) -> bool:
 
 async def get_all_users() -> list[dict]:
     async with engine.connect() as conn:
-        result = await conn.execute(text("SELECT id, name, penalties FROM users"))
+        result = await conn.execute(text("SELECT id, name, COALESCE(penalties, 0) FROM users"))
         rows = result.fetchall()
         return [{"id": row[0], "name": row[1], "penalties": row[2]} for row in rows]
 
