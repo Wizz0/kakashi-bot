@@ -23,7 +23,7 @@ class QueueEntry(BaseModel):
     user_id: int
     name: str
 
-class ScheduleResponse(BaseModel):
+class ScheduleGenerate(BaseModel):
     start_date: date
 
 class ScheduleResponse(BaseModel):
