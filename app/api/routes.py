@@ -142,3 +142,7 @@ async def add_penalty(user_id: int):
     
     await crud.add_penalty(user_id)
     return MessageResponse(message=f"Penalty added to {user['name']}")
+
+@router.post("/test-message", response_model=MessageResponse)
+async def send_test_message():
+    return MessageResponse(message="Test")
