@@ -66,7 +66,7 @@ async def get_today_queue() -> dict | None:
     async with engine.connect() as conn:
         result = await conn.execute(
             text("""
-                SELECT q.id, q.date, q.user_id, q.is_cleaned, u.name
+                SELECT q.id, q.date, q.user_id, COALESCE(q.is_cleaned, 0) as is_cleaned, u.name
                 FROM queue q
                 JOIN users u ON q.user_id = u.id
                 WHERE q.date = :today
@@ -75,7 +75,7 @@ async def get_today_queue() -> dict | None:
         )
         row = result.fetchone()
         if row:
-            return {"id": row[0], "date": row[1], "user_id": row[2], "is_cleaned": row[3], "name": row[4]}
+            return {"id": row[0], "date": row[1], "user_id": row[2], "is_cleaned": bool(row[3]), "name": row[4]}
         return None
 
 async def mark_cleaned(queue_id: int) -> bool:
@@ -214,7 +214,7 @@ async def get_week_schedule(start_date: date) -> list[dict]:
     async with engine.connect() as conn:
         result = await conn.execute(
             text("""
-                SELECT q.id, q.date, q.user_id, q.is_cleaned, u.name
+                SELECT q.id, q.date, q.user_id, COALESCE(q.is_cleaned, 0) as is_cleaned, u.name
                 FROM queue q
                 JOIN users u ON q.user_id = u.id
                 WHERE q.date BETWEEN :start AND :end
@@ -224,7 +224,7 @@ async def get_week_schedule(start_date: date) -> list[dict]:
         )
         rows = result.fetchall()
         return [
-            {"id": row[0], "date": row[1], "user_id": row[2], "is_cleaned": row[3], "name": row[4]}
+            {"id": row[0], "date": row[1], "user_id": row[2], "is_cleaned": bool(row[3]), "name": row[4]}
             for row in rows
         ]
 
@@ -235,7 +235,7 @@ async def get_user_queue(user_id: int, start_date: date) -> list[dict]:
     async with engine.connect() as conn:
         result = await conn.execute(
             text("""
-                SELECT q.date, q.is_cleaned
+                SELECT q.date, COALESCE(q.is_cleaned, 0) as is_cleaned
                 FROM queue q
                 WHERE q.user_id = :user_id AND q.date BETWEEN :start AND :end
                 ORDER BY q.date
@@ -243,4 +243,4 @@ async def get_user_queue(user_id: int, start_date: date) -> list[dict]:
             {"user_id": user_id, "start": start_date_str, "end": end_date}
         )
         rows = result.fetchall()
-        return [{"date": row[0], "is_cleaned": row[1]} for row in rows]
+        return [{"date": row[0], "is_cleaned": bool(row[1])} for row in rows]
