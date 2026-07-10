@@ -15,7 +15,7 @@ async def start_command(message: Message):
         "• Каждый вечер в 20:00 напоминаю в группе, чья очередь убирать\n"
         "• Слежу, кто убрал, а кто нет\n"
         "• Начисляю штрафы за невыполненную уборку\n"
-        "• Казню штрафников\n"
+        "• <s>Казню штрафников</s>\n"
         "• Составляю расписание на неделю с учетом штрафов\n\n"
     )
     await message.answer(text, parse_mode="HTML")
@@ -39,6 +39,26 @@ async def my_queue_command(message: Message):
     for day in days:
         text += f"- {day}\n"
     
+    await message.answer(text)
+
+@router.message(F.chat.type == "private", Command("my_penalties"))
+async def my_penalties_command(message: Message):
+    user = await crud.get_user_by_name(f"@{message.from_user.username}")
+    if not user:
+        await message.answer("Тебя нет в списке рабов 😿")
+        return
+    
+    penalties = user["penalties"]
+    
+    if penalties == 0:
+        text = "😻 У тебя нет штрафов, так держать!"
+    
+    elif penalties > 0 and penalties <= 2:
+        text = f"😾 Твои штрафы: {penalties}, будешь убирать столько дополнительных дней на следующей неделе"
+    
+    else:
+        text = f"🙀 У тебя слишком много штрафов: {penalties}, будешь убирать всю следующую неделю"
+
     await message.answer(text)
 
 @router.callback_query(F.data.startswith("cleaned:"))
