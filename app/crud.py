@@ -50,6 +50,17 @@ async def get_user_by_id(user_id: int) -> dict | None:
             return {"id": row[0], "name": row[1], "penalties": row[2]}
         return None
 
+async def get_user_by_name(name: str) -> dict | None:
+    async with engine.connect() as conn:
+        result = await conn.execute(
+            text("SELECT id, name, penalties FROM users WHERE name = :name"),
+            {"name": name}
+        )
+        row = result.fetchone()
+        if row:
+            return {"id": row[0], "name": row[1], "penalties": row[2]}
+        return None
+
 async def get_today_queue() -> dict | None:
     today = get_today()
     async with engine.connect() as conn:
