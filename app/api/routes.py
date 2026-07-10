@@ -1,7 +1,8 @@
 from datetime import date, datetime
 
 from sqlalchemy import text
-from app.config import TIMEZONE
+from app.config import TIMEZONE, BOT_TOKEN, GROUP_CHAT_ID
+from aiogram import Bot
 
 from fastapi import APIRouter, HTTPException, Query
 from app import crud
@@ -145,4 +146,10 @@ async def add_penalty(user_id: int):
 
 @router.post("/test-message", response_model=MessageResponse)
 async def send_test_message():
-    return MessageResponse(message="Test")
+    bot = Bot(token=BOT_TOKEN)
+    await bot.send_message(
+        chat_id=GROUP_CHAT_ID,
+        text="Тест"
+    )
+    await bot.session.close()
+    return MessageResponse(message="Test message")
