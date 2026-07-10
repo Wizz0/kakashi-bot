@@ -113,7 +113,7 @@ async def add_queue_entry(date: str = Query(..., description="Дата в фор
     # Получаем созданную запись
     async with crud.engine.connect() as conn:
         result = await conn.execute(
-            text("SELECT id, date, user_id, is_cleaned FROM queue WHERE date = :date AND user_id = :user_id ORDER BY id DESC LIMIT 1"),
+            text("SELECT id, date, user_id, COALESCE(is_cleaned, 0) as is_cleaned FROM queue WHERE date = :date AND user_id = :user_id ORDER BY id DESC LIMIT 1"),
             {"date": date, "user_id": user_id}
         )
         row = result.fetchone()

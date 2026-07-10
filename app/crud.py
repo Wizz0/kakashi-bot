@@ -137,7 +137,7 @@ async def get_last_user(start_date: date):
 async def add_queue(date: date, user_id: int):
     async with engine.connect() as conn:
         await conn.execute(
-            text("INSERT INTO queue (date, user_id) VALUES (:date, :user_id)"),
+            text("INSERT INTO queue (date, user_id, is_cleaned) VALUES (:date, :user_id, 0)"),
             {"date": date, "user_id": user_id}
         )
         await conn.commit()
