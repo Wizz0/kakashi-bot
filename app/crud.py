@@ -53,7 +53,7 @@ async def get_user_by_id(user_id: int) -> dict | None:
 async def get_user_by_name(name: str) -> dict | None:
     async with engine.connect() as conn:
         result = await conn.execute(
-            text("SELECT id, name, penalties FROM users WHERE name = :name"),
+            text("SELECT id, name, COALESCE(penalties, 0) as penalties FROM users WHERE name = :name"),
             {"name": name}
         )
         row = result.fetchone()

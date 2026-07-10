@@ -48,7 +48,7 @@ async def my_penalties_command(message: Message):
         await message.answer("Тебя нет в списке рабов 😿")
         return
     
-    penalties = user["penalties"]
+    penalties = user["penalties"] or 0
     
     if penalties == 0:
         text = "😻 У тебя нет штрафов, так держать!"
