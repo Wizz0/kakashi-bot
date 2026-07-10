@@ -100,6 +100,14 @@ async def generate_schedule(data: ScheduleGenerate):
         ]
     )
 
+@router.post("/queue/add", response_model=QueueResponse)
+async def add_queue_entry(date: str = Query(..., description="Дата в формате YYYY-MM-DD"), user_id: int = Query(...)):
+    user = await crud.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await crud.add_queue(date, user_id)
+
 @router.post("/queue/{queue_id}/clean", response_model=MessageResponse)
 async def mark_cleaned(queue_id: int):
     cleaned = await crud.mark_cleaned(queue_id)
