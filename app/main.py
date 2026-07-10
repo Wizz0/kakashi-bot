@@ -6,7 +6,7 @@ from aiogram.types import BotCommand
 from app.database import init_db
 from app.api.routes import router as api_router
 from app.bot.handlers import router as bot_router
-from app.bot.scheduler import schedule_loop
+from app.bot.scheduler import scheduler_loop
 from app.config import API_HOST, API_PORT, BOT_TOKEN
 
 app = FastAPI(title="Kakashi Bot API")
@@ -26,14 +26,13 @@ async def main():
 
     await set_bot_commands()
 
-    asyncio.create_task(schedule_loop())
+    asyncio.create_task(scheduler_loop())
+
+    asyncio.create_task(dp.start_polling(bot))
 
     config = uvicorn.Config(app, host=API_HOST, port=API_PORT, log_level="info")
     server = uvicorn.Server(config)
-
-    async with bot:
-        await dp.start_polling(bot)
-        await server.serve()
+    await server.serve()
 
 if __name__ == "__main__":
     asyncio.run(main())

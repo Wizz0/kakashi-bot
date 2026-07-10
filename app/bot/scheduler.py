@@ -38,7 +38,7 @@ async def generate_schedule():
         text=f"📅 Расписание на неделю сгенерировано!"
     )
 
-async def schedule_loop():
+async def scheduler_loop():
     while True:
         now = datetime.now(TIMEZONE)
 
