@@ -1,10 +1,24 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
+from aiogram.filters import Command
 from app import crud
 from datetime import datetime
 from app.config import TIMEZONE
 
 router = Router()
+
+@router.message(Command("start"))
+async def start_command(message: Message):
+    text = (
+        "Привет! Я бот для отслеживания уборки кошачьего лотка (да, ужасная судьба)\n\n"
+        "Что я умею:</b>\n"
+        "• Каждый вечер в 20:00 напоминаю в группе, чья очередь убирать\n"
+        "• Слежу, кто убрал, а кто нет\n"
+        "• Начисляю штрафы за невыполненную уборку\n"
+        "• Казню штрафников\n"
+        "• Составляю расписание на неделю с учетом штрафов\n\n"
+    )
+    await message.answer(text, parse_mode="HTML")
 
 @router.message(F.chat.type == "private", F.text == "/my_queue")
 async def my_queue_command(message: Message):
