@@ -1,4 +1,6 @@
 from datetime import date, datetime
+
+from sqlalchemy import text
 from app.config import TIMEZONE
 
 from fastapi import APIRouter, HTTPException, Query
@@ -107,6 +109,22 @@ async def add_queue_entry(date: str = Query(..., description="Дата в фор
         raise HTTPException(status_code=404, detail="User not found")
     
     await crud.add_queue(date, user_id)
+
+    # Получаем созданную запись
+    async with crud.engine.connect() as conn:
+        result = await conn.execute(
+            text("SELECT id, date, user_id, is_cleaned FROM queue WHERE date = :date AND user_id = :user_id ORDER BY id DESC LIMIT 1"),
+            {"date": date, "user_id": user_id}
+        )
+        row = result.fetchone()
+    
+    return QueueResponse(
+        id=row[0],
+        date=row[1],
+        user_id=row[2],
+        is_cleaned=row[3],
+        user_name=user["name"]
+    )
 
 @router.post("/queue/{queue_id}/clean", response_model=MessageResponse)
 async def mark_cleaned(queue_id: int):
