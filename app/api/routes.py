@@ -147,9 +147,11 @@ async def add_penalty(user_id: int):
 @router.post("/test-message", response_model=MessageResponse)
 async def send_test_message():
     bot = Bot(token=BOT_TOKEN)
-    await bot.send_message(
-        chat_id=GROUP_CHAT_ID,
-        text="Тест"
-    )
-    await bot.session.close()
+    try:
+        await bot.send_message(
+            chat_id=GROUP_CHAT_ID,
+            text="Тест"
+        )
+    finally:
+        await bot.session.close()
     return MessageResponse(message="Test message")
