@@ -24,10 +24,8 @@ async def start_command(message: Message):
 async def week_queue_command(message: Message):
     now = datetime.now(TIMEZONE)
     monday = now.date() - timedelta(days=now.weekday())
-    #today = datetime.now(TIMEZONE).date()
 
     schedule = await crud.get_week_schedule(monday)
-    #schedule = await crud.get_week_schedule(today)
     if not schedule:
         await message.answer("Расписание на эту неделю пустое 🙀")
         return
@@ -38,6 +36,17 @@ async def week_queue_command(message: Message):
         name = entry["name"]
         cleaned = "✔" if entry["is_cleaned"] else "❌"
         text += f"{date_str} - {name} {cleaned}\n"
+    
+    await message.answer(text)
+
+@router.message(F.chat.type.in_(["group", "supergroup"]), Command("today_queue"))
+async def today_queue_command(message: Message):
+    today = await crud.get_today_queue()
+    if not today:
+        await message.answer("Расписание на сегодня пустое 🙀")
+        return
+    
+    text = f"Cегодня убирает {today['name']}, смотри у меня! 😾"
     
     await message.answer(text)
 
