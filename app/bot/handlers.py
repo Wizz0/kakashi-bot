@@ -7,6 +7,16 @@ from app.config import TIMEZONE
 
 router = Router()
 
+MONTHS = {
+        1: "января", 2: "февраля", 3: "марта", 4: "апреля",
+        5: "мая", 6: "июня", 7: "июля", 8: "августа",
+        9: "сентября", 10: "октября", 11: "ноября", 12: "декабря"
+    }
+
+async def format_date(date_str: str):
+    year, month, day = map(int, date_str.split("-"))
+    return f"{day} {MONTHS[month]}"
+
 @router.message(Command("start"))
 async def start_command(message: Message):
     text = (
@@ -32,10 +42,10 @@ async def week_queue_command(message: Message):
     
     text = f"📆 Расписание на неделю ({monday} - {monday + timedelta(days=6)}):\n\n"
     for entry in schedule:
-        date_str = entry["date"]
+        formatted_date = format_date(entry["date"])
         name = entry["name"]
         cleaned = "✔" if entry["is_cleaned"] else "❌"
-        text += f"{date_str} - {name} {cleaned}\n"
+        text += f"{formatted_date} - {name} {cleaned}\n"
     
     await message.answer(text)
 
@@ -67,7 +77,7 @@ async def my_queue_command(message: Message):
     days = [entry["date"] for entry in queue]
     text = "📅 Твои дни уборки на этой неделе:\n\n"
     for day in days:
-        text += f"- {day}\n"
+        text += f"- {format_date(day)}\n"
     
     await message.answer(text)
 
