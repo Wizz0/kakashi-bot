@@ -32,7 +32,7 @@ async def week_queue_command(message: Message):
         await message.answer("Расписание на эту неделю пустое 🙀")
         return
     
-    text = f"📆 Расписание на неделю ({monday} - {monday + timedelta(days=6)}):\n\n"
+    text = f"📆 Расписание на неделю ({today} - {today + timedelta(days=6)}):\n\n"
     for entry in schedule:
         date_str = entry["date"]
         name = entry["name"]
