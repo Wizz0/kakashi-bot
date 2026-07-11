@@ -19,6 +19,7 @@ dp.include_router(bot_router)
 async def set_bot_commands():
     await bot.set_my_commands([
         BotCommand(command="start", description="Информация о боте"),
+        BotCommand(command="week_queue", description="Расписание на неделю"),
         BotCommand(command="my_queue", description="Мои дни уборки"),
         BotCommand(command="my_penalties", description="Мои штрафы")
     ])

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from app import crud
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.config import TIMEZONE
 
 router = Router()
@@ -19,6 +19,25 @@ async def start_command(message: Message):
         "• Составляю расписание на неделю с учетом штрафов\n\n"
     )
     await message.answer(text, parse_mode="HTML")
+
+@router.message(F.chat.type.in_(["group", "supergroup"]), Command("week_queue"))
+async def week_queue_command(message: Message):
+    now = datetime.now()
+    monday = now - timedelta(days=now.weekday()).date()
+
+    schedule = await crud.get_week_schedule(monday)
+    if not schedule:
+        await message.answer("Расписание на эту неделю пустое 🙀")
+        return
+    
+    text = f"📆 Расписание на неделю ({monday} - {monday + timedelta(days=6)}):\n\n"
+    for entry in schedule:
+        date_str = entry["date"]
+        name = entry["name"]
+        cleaned = "✔" if entry["is_cleaned"] else "❌"
+        text += f"{date_str} - {name} {cleaned}\n"
+    
+    await message.answer(text)
 
 @router.message(F.chat.type == "private", F.text == "/my_queue")
 async def my_queue_command(message: Message):
