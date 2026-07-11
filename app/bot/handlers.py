@@ -42,10 +42,10 @@ async def week_queue_command(message: Message):
     
     text = f"📆 Расписание на неделю ({monday} - {monday + timedelta(days=6)}):\n\n"
     for entry in schedule:
-        formatted_date = format_date(entry["date"])
+        date_str = str(entry["date"])
         name = entry["name"]
         cleaned = "✔" if entry["is_cleaned"] else "❌"
-        text += f"{formatted_date} - {name} {cleaned}\n"
+        text += f"{format_date(date_str)} - {name} {cleaned}\n"
     
     await message.answer(text)
 
@@ -77,7 +77,7 @@ async def my_queue_command(message: Message):
     days = [entry["date"] for entry in queue]
     text = "📅 Твои дни уборки на этой неделе:\n\n"
     for day in days:
-        text += f"- {format_date(day)}\n"
+        text += f"- {format_date(str(day))}\n"
     
     await message.answer(text)
 
