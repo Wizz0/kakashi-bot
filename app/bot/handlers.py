@@ -22,10 +22,12 @@ async def start_command(message: Message):
 
 @router.message(F.chat.type.in_(["group", "supergroup"]), Command("week_queue"))
 async def week_queue_command(message: Message):
-    now = datetime.now()
-    monday = now - timedelta(days=now.weekday()).date()
+    #now = datetime.now()
+    #monday = now.date() - timedelta(days=now.weekday())
+    today = datetime.now(TIMEZONE).date()
 
-    schedule = await crud.get_week_schedule(monday)
+    #schedule = await crud.get_week_schedule(monday)
+    schedule = await crud.get_week_schedule(today)
     if not schedule:
         await message.answer("Расписание на эту неделю пустое 🙀")
         return
