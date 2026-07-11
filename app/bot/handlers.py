@@ -13,7 +13,7 @@ MONTHS = {
         9: "сентября", 10: "октября", 11: "ноября", 12: "декабря"
     }
 
-async def format_date(date_str: str):
+def format_date(date_str: str):
     year, month, day = map(int, date_str.split("-"))
     return f"{day} {MONTHS[month]}"
 
