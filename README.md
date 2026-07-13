@@ -127,4 +127,5 @@ kakashi-bot/
 - [ ] Напоминания каждый час, пока пользователь не отметится
 
 ## Заказчик проекта
+(серьезный дядя)
 <img width="1280" height="964" alt="photo_2026-07-13_13-21-35" src="https://github.com/user-attachments/assets/fcd56735-88b8-4ffa-9344-431b9eab9f59" />
