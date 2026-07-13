@@ -1,8 +1,7 @@
 from datetime import date, datetime
 
 from sqlalchemy import text
-from app.config import TIMEZONE, BOT_TOKEN, GROUP_CHAT_ID
-from aiogram import Bot
+from app.config import TIMEZONE
 
 from fastapi import APIRouter, HTTPException, Query
 from app import crud
@@ -93,16 +92,6 @@ async def get_my_queue(user_id: int, start_date: date | None = None):
         for entry in queue
     ]
 
-@router.post("/schedule/generate", response_model=ScheduleResponse)
-async def generate_schedule(data: ScheduleGenerate):
-    schedule = await crud.generate_week_schedule(data.start_date)
-    return ScheduleResponse(
-        schedule=[
-            {"date": entry["date"], "user_id": entry["user_id"], "name":entry["name"]}
-            for entry in schedule
-        ]
-    )
-
 @router.post("/queue/add", response_model=QueueResponse)
 async def add_queue_entry(date: str = Query(..., description="Дата в формате YYYY-MM-DD"), user_id: int = Query(...)):
     user = await crud.get_user_by_id(user_id)
@@ -143,15 +132,3 @@ async def add_penalty(user_id: int):
     
     await crud.add_penalty(user_id)
     return MessageResponse(message=f"Penalty added to {user['name']}")
-
-@router.post("/test-message", response_model=MessageResponse)
-async def send_test_message():
-    bot = Bot(token=BOT_TOKEN)
-    try:
-        await bot.send_message(
-            chat_id=GROUP_CHAT_ID,
-            text="Тест"
-        )
-    finally:
-        await bot.session.close()
-    return MessageResponse(message="Test message")

@@ -22,8 +22,8 @@ REMINDER_MINUTE = 0
 CHECK_HOUR = 23
 CHECK_MINUTE = 59
 
-# День недели генерации расписания
-SCHEDULE_DAY = "sunday"
+# День недели генерации расписания (в понедельник в 0:00)
+SCHEDULE_DAY = "monday"
 
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
