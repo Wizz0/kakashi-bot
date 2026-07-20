@@ -132,3 +132,13 @@ async def add_penalty(user_id: int):
     
     await crud.add_penalty(user_id)
     return MessageResponse(message=f"Penalty added to {user['name']}")
+
+@router.post("/schedule/generate", response_model=ScheduleResponse)
+async def generate_schedule(data: ScheduleGenerate):
+    schedule = await crud.generate_week_schedule(data.start_date)
+    return ScheduleResponse(
+        schedule=[
+            {"date": entry["date"], "user_id": entry["user_id"], "name": entry["name"]}
+            for entry in schedule
+        ]
+    )
